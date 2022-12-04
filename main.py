@@ -4,6 +4,36 @@ from tkinter import messagebox
 from tkinter import *
 import pyperclip
 
+
+
+
+# ---------------------------- Search a Website ------------------------------- #
+
+def search_web():
+    website = website_ent.get()
+    try:
+        with open('data.json', mode='r') as file:
+            data = json.load(file)
+
+    except FileNotFoundError:
+        messagebox.showerror(title='Error', message='No Data File Found.')
+    else:
+        if website in data:
+            email= data[website]['email']
+            pwd = data[website]['pwd']
+            messagebox.showinfo(title=website, message=f"Email: {email}\nPassword: {pwd}")
+        else:
+            messagebox.showinfo(title='Not Found', message=f"No details for the {website} exists.")
+
+
+
+
+
+
+
+
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def gen_pwd():
@@ -37,7 +67,7 @@ def write_data(file_path, mode='r'):
 
 def save():
 
-    website = website_ent.get()
+    website = website_ent.get().title()
     username=  user_ent.get()
     pwd = pwd_ent.get()
     new_data = {
@@ -70,11 +100,6 @@ def save():
             #data.update(new_data)
             # with open('data.json', mode='w') as file:
             #          json.dump(data, file, indent=4)
-
-
-
-
-
         finally:
             pwd_ent.delete(0,END)
             website_ent.delete(0,END)
@@ -105,9 +130,9 @@ pwd_text.grid(row=3, column=0, pady=2)
 
 
 #entry
-website_ent = Entry(window, width=50)
+website_ent = Entry(window, width=32)
 website_ent.focus()
-website_ent.grid(row=1, column=1, columnspan=2,  pady=2)
+website_ent.grid(row=1, column=1, pady=2)
 website_input= website_ent.get()
 
 
@@ -122,6 +147,9 @@ pwd_ent.grid(row=3, column=1, pady=2)
 #buttons
 pwd_button= Button(window, text='Generate Password', command=gen_pwd)
 pwd_button.grid(row=3, column=2, pady=2)
+
+search_button= Button(window, text='Search', width= 14,  command=search_web)
+search_button.grid(row=1, column=2, pady=2)
 
 add_button = Button(window, text ='Add', width= 43, command=save)
 add_button.grid(row=4, column=1, columnspan=2, pady=2)
