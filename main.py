@@ -1,3 +1,4 @@
+import json
 import random
 from tkinter import messagebox
 from tkinter import *
@@ -29,24 +30,54 @@ def gen_pwd():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
+def write_data(file_path, mode='r'):
+
+    file =  open(file_path, mode)
+    return file
 
 def save():
 
     website = website_ent.get()
     username=  user_ent.get()
     pwd = pwd_ent.get()
-
-    if not (website and username and pwd):
+    new_data = {
+        website:{
+            "email": username,
+            "pwd":pwd
+        }
+    }
+    if not (website  and pwd):
         messagebox.showerror(title='Oops', message="Please don't leave any fields empty!")
     else:
-        answer=messagebox.askyesno(title=website, message=f"These are the details entered: \nEmail: {username}\n"                                               f"Password: {pwd} \n ***is okay to save?***")
-        if answer:
-            with open('data.csv', mode = 'a') as file:
-                file.write(f"{website}  |  {username}  |  {pwd} \n")
-                pwd_ent.delete(0,END)
-                website_ent.delete(0,END)
+        try:
+            file = write_data('data.json', mode='r')
+            data_s = json.load(file)
+            # with open('data.json', mode='r') as file:
+            #      data = json.load(file)
 
 
+        except FileNotFoundError :
+            new_file = write_data('data.json', mode='w')
+            json.dump(new_data, new_file, indent=4)
+            # with open('data.json', mode='w') as new_file:
+            #     # write data to the file
+            #     json.dump(new_data, new_file , indent=4)
+        else:
+            f = write_data('data.json', mode='w')
+            data_s.update(new_data)
+            json.dump(data_s, f, indent=4)
+            # appending to old data
+            #data.update(new_data)
+            # with open('data.json', mode='w') as file:
+            #          json.dump(data, file, indent=4)
+
+
+
+
+
+        finally:
+            pwd_ent.delete(0,END)
+            website_ent.delete(0,END)
 # ---------------------------- UI SETUP ------------------------------- #
 
 
